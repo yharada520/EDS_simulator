@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+# リポジトリルートを import パスに追加（eds_sim パッケージを解決）
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-ra"
