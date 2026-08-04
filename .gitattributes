@@ -1,0 +1,7 @@
+# リポジトリ内はLFに正規化（クロスプラットフォーム）
+* text=auto eol=lf
+
+# バイナリ
+*.png binary
+*.jpg binary
+*.pdf binary

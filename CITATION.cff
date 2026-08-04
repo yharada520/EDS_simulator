@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "EDS Spectrum Simulator"
+abstract: >-
+  An educational / R&D web app that visualizes counting statistics (Poisson
+  noise), detector response, and multilayer thin-film matrix effects in
+  energy-dispersive X-ray spectroscopy (EDS/EDX). Built with Streamlit,
+  Plotly, and xraylib.
+type: software
+authors:
+  - name: "Yossy (Tohoku Yossy)"
+    alias: yharada520
+license: Apache-2.0
+version: 1.0.0
+date-released: "2026-08-04"
+keywords:
+  - EDS
+  - EDX
+  - SEM
+  - X-ray microanalysis
+  - Poisson statistics
+  - thin film
+  - phi-rho-z
+  - xraylib
+  - Streamlit
+repository-code: "https://github.com/yharada520/EDS_simulator"
+url: "https://github.com/yharada520/EDS_simulator"

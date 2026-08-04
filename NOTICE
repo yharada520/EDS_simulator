@@ -1,0 +1,11 @@
+EDS Spectrum Simulator
+Copyright 2026 Yossy (Tohoku Yossy / yharada520)
+
+This product includes software developed by Yossy (Tohoku Yossy).
+
+Licensed under the Apache License, Version 2.0.
+
+This software uses the following third-party libraries (installed separately,
+under their own licenses): xraylib, NumPy, SciPy, Streamlit, Plotly, pandas.
+xraylib is not distributed with this repository and remains under its own
+license (see https://github.com/tschoonj/xraylib).
