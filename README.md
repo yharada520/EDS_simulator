@@ -57,24 +57,25 @@ docker compose up --build
 # open http://localhost:8501
 ```
 
-### conda
-
-```bash
-conda env create -f environment.yml
-conda activate eds-sim
-streamlit run app.py
-```
-
-### pip (xraylib なしでも起動可)
+### pip
 
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-> Without `xraylib`, the app runs on a small built-in fallback table (Phase 1 fully works,
-> Phase 2/3 accuracy limited). `xraylib` is best installed from **conda-forge**.
-> xraylib 未導入時は内蔵の簡易テーブルにフォールバックします。
+> `xraylib` ships PyPI wheels for every OS and Python 3.10–3.13, so pip installs it directly.
+> Without it, the app falls back to a small built-in table (Phase 1 fully works, Phase 2/3
+> accuracy limited). xraylib は PyPI wheel で入ります（conda-forge も利用可）。
+
+### conda (optional)
+
+```bash
+conda create -n eds-sim python=3.12
+conda activate eds-sim
+pip install -r requirements.txt
+streamlit run app.py
+```
 
 ## Example structures / 構成例
 
@@ -99,7 +100,7 @@ EDS_Simulator/
 │   ├── elements.py        # xraylib ヘルパ（遅延import・フォールバック）
 │   └── spectrum.py        # 合成 ＋ ポアソンノイズ
 ├── tests/                 # スモークテスト（pytest）
-├── environment.yml / requirements.txt
+├── requirements.txt
 └── Dockerfile / docker-compose.yml
 ```
 
