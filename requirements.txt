@@ -1,10 +1,15 @@
 # pip 依存関係。xraylib は PyPI に Windows/macOS/Linux(manylinux) の wheel が
-# あり（cp310-312, x86_64 で確認）、Streamlit Community Cloud でもそのまま動く。
-# wheel の無い環境で失敗する場合は行を外せば内蔵フォールバックで起動する
-# （フェーズ2/3 の精度は限定的。conda-forge 版の利用も可）。
+# あり（cp310-313, x86_64 で確認）、Streamlit Community Cloud でもそのまま動く。
+# wheel の無い環境で失敗する場合は行を外せば内蔵フォールバックで起動する。
 numpy>=1.26
 scipy>=1.11
-streamlit>=1.36
 plotly>=5.20
 pandas>=2.0
 xraylib>=4.1
+
+# Web 配信スタックは動作確認済みの組み合わせに固定する。
+# 新しい Streamlit は内部で Starlette+Uvicorn を使い、緩い指定だと噛み合わない
+# 新しい Starlette が入って GZipResponder で TypeError になる（Cloud で発生）。
+streamlit==1.58.0
+starlette==1.3.1
+uvicorn==0.49.0
