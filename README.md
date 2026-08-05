@@ -1,5 +1,6 @@
 # EDS Spectrum Simulator / EDS スペクトル・シミュレータ
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://edssimulator-xjd8gyxkgdwezujsfevvha.streamlit.app/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![CI](https://github.com/yharada520/EDS_simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/yharada520/EDS_simulator/actions/workflows/ci.yml)
@@ -8,6 +9,8 @@ An interactive **web app for building intuition about EDS/EDX measurements** —
 statistics (Poisson noise), detector response, and thin-film / multilayer matrix effects.
 Built with Streamlit, Plotly and [xraylib](https://github.com/tschoonj/xraylib).
 教育・R&D 用のインタラクティブな EDS スペクトル・シミュレータです。
+
+**▶ Live demo (no install): https://edssimulator-xjd8gyxkgdwezujsfevvha.streamlit.app/**
 
 ![Trace peak buried in sqrt(N) noise, revealed by more counts](docs/demo_statistics.png)
 
