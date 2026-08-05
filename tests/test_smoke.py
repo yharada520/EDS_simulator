@@ -83,6 +83,30 @@ def test_thicker_overlayer_attenuates_buried_layer():
     assert ti_net(1000.0) < ti_net(500.0) < ti_net(50.0)
 
 
+@pytest.mark.skipif(not xraylib_available(),
+                    reason="電子衝突電離モデルの検証に xraylib が必要")
+def test_au_m_line_dominates_l_at_sem_voltage():
+    """電子線励起では Au M 線が L 線より強く、L 殻を励起できない低 kV で L は消える。"""
+    def net(r, sym, pfx):
+        e = r.energy_kev
+        c = [p for p in r.peaks if p.symbol == sym and p.name.startswith(pfx)]
+        if not c:
+            return 0.0
+        p = max(c, key=lambda x: x.rel_weight)
+        return float(r.characteristic[int(np.argmin(np.abs(e - p.energy_kev)))])
+
+    r15 = simulate(SimulationConfig(
+        beam=BeamConditions(15.0, 5.0, 120.0),
+        elements=[ElementSpec("Au", 100.0)], random_seed=1))
+    assert net(r15, "Au", "Ma") > net(r15, "Au", "La") > 0.0  # 15kV: M>L, L も存在
+
+    r8 = simulate(SimulationConfig(
+        beam=BeamConditions(8.0, 5.0, 120.0),
+        elements=[ElementSpec("Au", 100.0)], random_seed=1))
+    assert net(r8, "Au", "Ma") > 0.0          # M 殻は励起される
+    assert net(r8, "Au", "La") == 0.0         # L 殻(端~11.9keV)は 8kV で励起されない
+
+
 def test_parse_formula_weight_fractions():
     fr = parse_formula("TiO2")
     assert abs(fr["Ti"] - 0.60) < 0.03

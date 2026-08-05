@@ -118,9 +118,15 @@ def _slab_line_intensity(line: XLine, z_top: float, z_bot: float,
     """
     p = make_phi_params(z_mat, a_mat, e0_kev, line.ec_kev)
     mu_self = compound_mac_scalar(emit_formula, line.energy_kev) * chi
-    hi = min(z_bot, _gaussian_depth_cap(p))  # 発生深さを超える層は 0
+    cap = _gaussian_depth_cap(p)
+    # φ を全面積で規格化 → このスラブが担う「全生成のうち脱出できる割合」を返す。
+    # 生成強度（過電圧・蛍光収率・遷移確率）はライン重み側が持つため二重計上を避ける。
+    total_area = _emitted_integral(p, 0.0, cap, 0.0, offset=0.0)
+    if total_area <= 0.0:
+        return 0.0
+    hi = min(z_bot, cap)  # 発生深さを超える層は 0
     integral = _emitted_integral(p, z_top, hi, mu_self, offset=z_top)
-    return over_atten * integral
+    return over_atten * integral / total_area
 
 
 # --------------------------------------------------------------------------

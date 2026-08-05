@@ -8,6 +8,7 @@ xraylib は conda-forge 経由での導入を前提とするが、未導入環�
 from __future__ import annotations
 
 import logging
+import math
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Optional
@@ -136,13 +137,49 @@ _SHELL_FOR_SERIES = {
     "M5": "M5_SHELL",
 }
 
+# 系列 → その副殻の電子数（電子衝突電離断面積の重み）
+_SHELL_ELECTRONS = {"K": 2, "L1": 2, "L2": 2, "L3": 4, "M4": 4, "M5": 6}
+
+
+def _fluor_yield(xl, z: int, series: str) -> float:
+    """副殻の蛍光収率 ω。取得不可（低ZのM殻等）は 0。"""
+    shell_attr = _SHELL_FOR_SERIES.get(series)
+    if shell_attr is not None and hasattr(xl, shell_attr):
+        try:
+            return float(xl.FluorYield(z, getattr(xl, shell_attr)))
+        except Exception:
+            return 0.0
+    return 0.0
+
+
+def electron_impact_weight(xl, z: int, series: str, edge_kev: float,
+                           rad_rate: float, e0_kev: float) -> float:
+    """電子線励起 EDS における特性ラインの相対生成強度。
+
+        weight ∝ n_i · [ln(U)/U] / Ec²  ·  ω_i  ·  p_ij
+        （n_i: 副殻電子数, U=E0/Ec: 過電圧, ω: 蛍光収率, p: 遷移確率）
+
+    第1項は Bethe 形の電子衝突電離断面積で、閾値 U=1 でゼロ、U≈e で最大と
+    なる（光子励起の xraylib CS_FluorLine とは挙動が異なる点に注意）。
+    """
+    if edge_kev <= 0.0:
+        return 0.0
+    u0 = e0_kev / edge_kev
+    if u0 <= 1.0:
+        return 0.0  # 過電圧不足で励起されない
+    n_i = _SHELL_ELECTRONS.get(series, 2)
+    ionization = n_i * math.log(u0) / (u0 * edge_kev * edge_kev)
+    omega = _fluor_yield(xl, z, series)
+    return ionization * omega * rad_rate
+
 
 def characteristic_lines(symbol: str, e0_ev: float) -> list[XLine]:
     """指定元素の特性X線ラインを返す。
 
     e0_ev より吸収端エネルギーが低い（＝励起可能な）ラインのみ返す。
-    強度は xraylib の RadRate（放射遷移確率）を重みに用いる。
-    xraylib 非導入時はフォールバックテーブルを使う。
+    相対強度は電子衝突電離（Bethe形）× 蛍光収率 × 遷移確率で重み付けし、
+    多殻元素（Au の M/L 等）の殻間相対強度と過電圧依存性を反映する。
+    xraylib 非導入時はフォールバックテーブル（近似）を使う。
     """
     xl = get_xraylib()
     z = atomic_number(symbol)
@@ -182,14 +219,19 @@ def characteristic_lines(symbol: str, e0_ev: float) -> list[XLine]:
         if edge <= 0.0:
             edge = energy * 1.05  # 端が取れない場合の近似
 
-        # 相対強度: 放射遷移確率
+        # 放射遷移確率（殻内分岐比）
         try:
             rate = float(xl.RadRate(z, line_const))
         except Exception:
             rate = 0.0
         if rate <= 0.0:
             rate = 1.0e-3  # RadRate 未定義でも位置確認用に微小値を残す
-        lines.append(XLine(disp_name, energy, rate, ec_kev=edge, series=series))
+
+        # 相対強度: 電子衝突電離 × 蛍光収率 × 遷移確率
+        weight = electron_impact_weight(xl, z, series, edge, rate, e0_kev)
+        if weight <= 0.0:
+            weight = 1.0e-12  # 位置確認用の微小値（実質不可視）
+        lines.append(XLine(disp_name, energy, weight, ec_kev=edge, series=series))
 
     return lines
 

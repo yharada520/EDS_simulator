@@ -37,8 +37,10 @@ Analysts often misread EDS results. Two common failure modes this tool makes tan
 
 - **Counting statistics**: Kramers bremsstrahlung + Gaussian characteristic peaks, with
   `numpy.random.poisson` shot noise. Max counts scales linearly with probe current × live time.
-- **xraylib database**: accurate line energies, radiative rates, absorption edges, and the
-  Be-window / self-absorption via mass attenuation coefficients.
+- **xraylib database**: accurate line energies, absorption edges, fluorescence yields, and
+  Be-window / self-absorption via mass attenuation coefficients. Line intensities use an
+  **electron-impact excitation** model (Bethe ionization × fluorescence yield × radiative
+  rate), so multi-shell elements (e.g. Au M vs L) get the right overvoltage-dependent ratios.
 - **Multilayer thin film**: stack up to 5 layers (surface → substrate). Each layer/substrate
   is given as a **chemical formula** (e.g. `TiN`, `TiO2`, `Al2O3`); absorption by overlying
   layers is computed with Bragg's additivity rule. Analytical **Packwood-Brown φ(ρz)** depth
@@ -113,7 +115,10 @@ EDS_Simulator/
 - Thin-film φ(ρz) is **Packwood-Brown** with a **Kanaya-Okayama** depth scale; the electron
   scattering matrix is approximated by the substrate composition (thin films, ρz ≪ range).
   厚い重元素最上層では電子減速を過小評価しうる。
-- Shell-to-shell relative intensities of multi-shell elements use RadRate only. 殻間差は未考慮。
+- Line intensities use a **Bethe electron-impact ionization** cross-section (∝ ln U / U,
+  U = E0/Ec) × fluorescence yield × radiative rate — appropriate for electron-beam EDS, not
+  the photon-excited (XRF) cross-sections. Absolute quantification is still not the goal.
+  電子線励起 EDS 向けのモデルで、定量値そのものを与えるものではない。
 - Compound formulas support **simple formulas only** (no parentheses). Densities come from a
   preset table / single-element values, otherwise a nominal default (manual entry recommended).
   化合物は単純式のみ（括弧なし）。密度は要手入力推奨。
@@ -122,8 +127,8 @@ EDS_Simulator/
 
 - [ ] Parenthetical / hydrate formulas (e.g. `Ca(OH)2`). 括弧・水和物対応の組成パーサ。
 - [ ] Multi-element compound density presets expansion. 化合物密度プリセットの拡充。
-- [ ] Shell-dependent ionization (`CS_FluorLine_Kissel`) for multi-shell elements.
 - [ ] Absorption-edge visualization on the spectrum.
+- [ ] Refined electron-impact cross-sections (Casnati / Bote-Salvat) and Coster-Kronig.
 
 ## Tests / テスト
 
