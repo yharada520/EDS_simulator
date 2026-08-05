@@ -1,0 +1,4 @@
+# Streamlit 設定（ローカル／Community Cloud 共通）
+# テーマは指定せず、利用者のライト/ダーク設定に追従させる。
+[browser]
+gatherUsageStats = false

@@ -1,9 +1,10 @@
-# pip フォールバック用。xraylib は PyPI 提供が不安定なため conda 導入を推奨。
-# この requirements だけではフェーズ2の xraylib 連携は動かず、
-# eds_sim 内蔵の簡易テーブルにフォールバックする。
+# pip 依存関係。xraylib は PyPI に Windows/macOS/Linux(manylinux) の wheel が
+# あり（cp310-312, x86_64 で確認）、Streamlit Community Cloud でもそのまま動く。
+# wheel の無い環境で失敗する場合は行を外せば内蔵フォールバックで起動する
+# （フェーズ2/3 の精度は限定的。conda-forge 版の利用も可）。
 numpy>=1.26
 scipy>=1.11
 streamlit>=1.36
 plotly>=5.20
 pandas>=2.0
-# xraylib          # 環境が対応していれば有効化（conda-forge 推奨）
+xraylib>=4.1
