@@ -6,9 +6,9 @@
 
 from __future__ import annotations
 
-# 表示名 -> 言語コード
-LANGUAGES: dict[str, str] = {"日本語": "ja", "English": "en"}
-DEFAULT_LANG = "ja"
+# 表示名 -> 言語コード（先頭がセレクタの初期値＝既定言語）
+LANGUAGES: dict[str, str] = {"English": "en", "日本語": "ja"}
+DEFAULT_LANG = "en"
 
 TR: dict[str, dict[str, str]] = {
     # --- 言語・ページ全体 ---
