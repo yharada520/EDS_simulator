@@ -179,10 +179,11 @@ def layered_line_intensities(cfg: SimulationConfig) -> list[LayerLine]:
     out: list[LayerLine] = []
 
     # 各層ライン（構成元素ごと × 質量分率）
+    # layer_label は言語中立トークン（表示は UI 側で層番号と共に整形）
     for k, L in enumerate(layers):
         if rhoz[k] <= 0.0:
             continue
-        label = f"膜{k + 1}"
+        label = "film"
         for elem, wfrac in fractions[k].items():
             for line in characteristic_lines(elem, e0_kev * 1.0e3):
                 over = overlying_atten(line.energy_kev, k)
@@ -199,6 +200,6 @@ def layered_line_intensities(cfg: SimulationConfig) -> list[LayerLine]:
             inten = wfrac * line.rel_intensity * _slab_line_intensity(
                 line, z_stack, math.inf, over, chi,
                 z_mat, a_mat, e0_kev, lay.substrate_composition)
-            out.append(LayerLine(elem, len(layers), "基板", line, inten))
+            out.append(LayerLine(elem, len(layers), "substrate", line, inten))
 
     return out

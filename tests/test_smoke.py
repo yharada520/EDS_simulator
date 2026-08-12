@@ -56,9 +56,9 @@ def test_thin_film_runs_with_layers():
     r = simulate(cfg)
     assert np.isfinite(r.theoretical).all()
     layers = {p.layer for p in r.peaks}
-    # 少なくとも膜と基板のラベルが付く
-    assert any(lab != "基板" for lab in layers)
-    assert "基板" in layers
+    # 少なくとも膜(film)と基板(substrate)のトークンが付く
+    assert "film" in layers
+    assert "substrate" in layers
 
 
 @pytest.mark.skipif(not xraylib_available(),

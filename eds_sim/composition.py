@@ -88,24 +88,24 @@ _NOMINAL_DENSITY = 5.0
 
 def resolve_density(formula: str,
                     override: float | None = None) -> tuple[float, str]:
-    """化合物密度 [g/cm^3] と出所を返す。
+    """化合物密度 [g/cm^3] と出所（言語中立トークン）を返す。
 
     優先順位: ユーザ上書き > プリセット表 > 単一元素の元素密度 > 仮の既定値。
-    出所は "指定" | "プリセット" | "元素" | "既定(要手入力)"。
+    出所トークンは "specified" | "preset" | "element" | "nominal"。
 
     体積加算則 1/ρ=Σ w_i/ρ_i は、xraylib が O/N を気体密度で返すため
     化合物では破綻する。よってプリセットに無い多元素化合物は仮の既定値とし、
     正確な密度はユーザ手入力を促す。
     """
     if override is not None and override > 0.0:
-        return override, "指定"
+        return override, "specified"
     canon = _canonical(formula)
     if canon in _PRESET_DENSITY:
-        return _PRESET_DENSITY[canon], "プリセット"
+        return _PRESET_DENSITY[canon], "preset"
     fractions = parse_formula(formula)
     if len(fractions) == 1:
-        return element_density(next(iter(fractions))), "元素"
-    return _NOMINAL_DENSITY, "既定(要手入力)"
+        return element_density(next(iter(fractions))), "element"
+    return _NOMINAL_DENSITY, "nominal"
 
 
 def compound_density(formula: str, override: float | None = None) -> float:
