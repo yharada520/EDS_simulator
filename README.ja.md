@@ -76,6 +76,21 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+## デスクトップアプリ（Windows / macOS）
+
+PyInstaller で **単体実行ファイル**（利用者に Python 不要）に固められます。ローカルで
+Streamlit を起動し、ネイティブ窓（pywebview）で表示（無ければ既定ブラウザにフォールバック）。
+詳細は [desktop/README.md](desktop/README.md)。
+
+```bash
+# 配布したい OS 上でビルド（クロスコンパイル不可）
+desktop\build_windows.bat      # Windows → dist\EDS-Simulator\（フォルダごと配布）
+bash desktop/build_macos.sh    # macOS   → dist/EDS-Simulator.app
+```
+
+> 各 OS で個別にビルド。サイズは numpy/scipy/xraylib 同梱で約 300〜450 MB、Windows は
+> フォルダごと配布します。未署名だと初回起動時に SmartScreen / Gatekeeper 警告が出ます。
+
 ## 構成例
 
 | 構造 | 層（表面 → 基板） | 何が学べるか |

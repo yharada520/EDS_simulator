@@ -82,6 +82,22 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+## Desktop app (Windows / macOS)
+
+Package the app as a **standalone executable** (no Python needed by the user) with
+PyInstaller. The launcher starts a local Streamlit server and shows it in a native window
+(pywebview), falling back to the default browser. Details: [desktop/README.md](desktop/README.md).
+
+```bash
+# Build on the target OS (no cross-compilation)
+desktop\build_windows.bat      # Windows -> dist\EDS-Simulator\  (distribute the whole folder)
+bash desktop/build_macos.sh    # macOS   -> dist/EDS-Simulator.app
+```
+
+> Build separately on each OS. The bundle is ~300–450 MB (numpy/scipy/xraylib) and is shipped
+> as a folder on Windows. Unsigned builds trigger a SmartScreen / Gatekeeper warning on first
+> launch.
+
 ## Example structures
 
 | Structure | Layers (surface → substrate) | What it shows |
